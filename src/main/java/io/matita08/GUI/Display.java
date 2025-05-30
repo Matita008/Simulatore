@@ -38,6 +38,11 @@ public class Display extends JFrame {
       swingThread = Thread.currentThread();
    }
    
+   /**
+    * Assembles and arranges the main GUI components within the primary container panel.
+    *
+    * This method configures the layout and adds the CPU, bus labels, memory display (with scroll pane and titled border), control panel, and interfaces panel to the main panel using GridBagLayout constraints.
+    */
    private void createMainComponents() {
       GridBagConstraints cfg = new GridBagConstraints();
       Border b;
@@ -51,6 +56,7 @@ public class Display extends JFrame {
       cfg.ipadx = 2;      //padding (x-axis)
       cfg.ipady = 3;      //padding (y-axis)
       cfg.weighty = 0.6;  //distribution of extra space (y-axis)
+      cfg.fill = GridBagConstraints.BOTH;
       createCPUComponents();
       main.add(CPU, cfg);
       
@@ -64,16 +70,18 @@ public class Display extends JFrame {
       cfg.weighty = 0;    //distribution of extra space (y-axis)
       createBusComponents();
       main.add(busLabels, cfg);
-      
+
       tb = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Memoria centrale");
       tb.setTitleJustification(TitledBorder.LEFT);
       tb.setTitlePosition(TitledBorder.TOP);
       b = BorderFactory.createCompoundBorder(new EmptyBorder(5, 5, 5, 5), tb);
-      JPanel tmp = new JPanel();
-      tmp.setBorder(b);
       MC = new JPanel();
       MC.setLayout(new GridLayout(0, 2, 2, 0));//DONT FREAKING TOUCH ME, 0 IS ANY NUMBER OF ROWS (ENTRIES) YOU FREAAKY MORON DUMB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       MC.setBorder(BorderFactory.createMatteBorder(0,0,0,0,Color.lightGray));
+      //MC.setPreferredSize(new Dimension(150,400));
+      JScrollPane scroll = new JScrollPane(MC, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      scroll.setBorder(b);
+      scroll.setPreferredSize(new Dimension(125, 250));
       cfg.gridx = 6;      //start column
       cfg.gridy = 0;      //start row
       cfg.gridheight = 6; //row span
@@ -82,10 +90,11 @@ public class Display extends JFrame {
       cfg.ipady = 5;      //padding (y-axis)
       cfg.weighty = 0.6;  //distribution of extra space (y-axis)
       createMCComponents();
-      JScrollPane tmpS = new JScrollPane(MC, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      tmpS.setBorder(BorderFactory.createMatteBorder(0,0,0,0,Color.lightGray));
-      tmp.add(tmpS);
-      main.add(tmp, cfg);
+      main.add(scroll, cfg);
+      /*JFrame test = new JFrame("Test");
+      test.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+      test.add(scroll);
+      test.setVisible(true);//*/
       
       controlPanel = new JPanel();
       cfg.gridx = 0;      //start column
@@ -114,18 +123,26 @@ public class Display extends JFrame {
       CPU.add(new JLabel("CPU"));
    }
    
+   /**
+    * Adds a label for the bus section to the busLabels panel.
+    */
    private void createBusComponents() {
       busLabels.add(new JLabel("bus"));
    }
    
+   /**
+    * Populates the memory central (MC) panel with address and value labels for each memory cell.
+    *
+    * Adds header labels for addresses and values, then iterates through all memory cells to create and align address labels and corresponding value labels. Value labels are stored in MCData for later updates.
+    */
    private void createMCComponents() {
-      ((JLabel)MC.add(new JLabel("Indirizzi  "))).setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-      MC.add(new JLabel(" Valori"));
+      ((JLabel)MC.add(new JLabel("Indirizzi  ", SwingConstants.TRAILING))).setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+      MC.add(new JLabel(" Valori",SwingConstants.LEFT));
       for (int i = 0; i < Constants.MC_Size; i++) {
          JLabel lb = new JLabel(i + " ", SwingConstants.TRAILING);
          lb.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
          MC.add(lb);
-         JLabel l = new JLabel(" " + DoubleValue.unset());
+         JLabel l = new JLabel(" " + DoubleValue.unset(), SwingConstants.CENTER);
          MC.add(l);
          MCData.add(l);
       }
