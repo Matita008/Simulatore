@@ -47,4 +47,9 @@ public class UndefinedValue extends Value implements Cloneable{
    public Value mul(Value v2) {
       return this;
    }
+   
+   @Override
+   public boolean equals(int n) {
+      return false;
+   }
 }
