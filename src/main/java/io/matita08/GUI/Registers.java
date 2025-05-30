@@ -10,12 +10,18 @@ public final class Registers {
    private static final ArrayList<Value> MC = new ArrayList<>(Constants.MC_Size);
    private static final DoubleValue pc = new DoubleValue(0);
    public static int modFlag = 0;
-   private static Value ir = Value.getNew();
-   private static Value pointer = Value.getNew();
-   private static Value mar = Value.getNew();
-   private static Value mdr = Value.getNew();
+   
+   private static Value ir = Value.getNewAddress();
+   private static Value pointer = Value.getNewAddress();
+   private static Value mar = Value.getNewAddress();
+   private static Value mdr = Value.getNewAddress();
+   
    private static Value Acc = Value.getNew();
    private static Value regB = Value.getNew();
+   private static Value bufIn = Value.getNew();
+   private static Value bufOut = Value.getNew();
+   
+   private static Flag zero = new Flag();
    
    static {
       for (int i = 0; i < Constants.MC_Size; i++) {
@@ -107,8 +113,67 @@ public final class Registers {
       return pointer;
    }
    
+   /****
+    * Sets the pointer register to the specified value and updates the modification flag.
+    *
+    * @param pointer the new value for the pointer register
+    */
    public static void setPointer(Value pointer) {
       modFlag = 2 | modFlag;
       Registers.pointer = pointer;
+   }
+   
+   /**
+    * Returns the current value of the input buffer register.
+    *
+    * @return the value stored in the input buffer
+    */
+   public static Value getBufIn() {
+      return bufIn;
+   }
+   
+   /****
+    * Sets the value of the input buffer register.
+    *
+    * @param bufIn the value to assign to the input buffer
+    */
+   public static void setBufIn(Value bufIn) {
+      Registers.bufIn = bufIn;
+   }
+   
+   /**
+    * Returns the current value of the output buffer register.
+    *
+    * @return the value stored in the output buffer
+    */
+   public static Value getBufOut() {
+      return bufOut;
+   }
+   
+   /****
+    * Sets the output buffer register to the specified value.
+    *
+    * @param bufOut the value to assign to the output buffer register
+    */
+   public static void setBufOut(Value bufOut) {
+      Registers.bufOut = bufOut;
+   }
+   
+   /**
+    * Returns the current value of the zero flag register.
+    *
+    * @return the zero flag
+    */
+   public static Flag getZero() {
+      return zero;
+   }
+   
+   /****
+    * Sets the value of the zero flag register.
+    *
+    * @param zero the new value for the zero flag
+    */
+   public static void setZero(Flag zero) {
+      Registers.zero = zero;
    }
 }
