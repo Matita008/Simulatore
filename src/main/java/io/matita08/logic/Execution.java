@@ -45,17 +45,36 @@ public class Execution {
       ControlUnit.nextCycles = ControlUnit.opcode.cycles;
    }
    
+   /**
+    * Executes the current operation for the active execution cycle.
+    *
+    * Performs the action associated with the current opcode, passing the current cycle count.
+    * Decrements the cycle count; when it reaches zero, resets the opcode to Unknown and sets the next phase to Fetch.
+    */
    public static void execute() {
       ControlUnit.opcode.action.accept(ControlUnit.currentCycles);
-      if((ControlUnit.nextCycles = ControlUnit.currentCycles - 1) == 0) ControlUnit.next = Phase.Fetch;
+      if((ControlUnit.nextCycles = ControlUnit.currentCycles - 1) == 0) {
+         ControlUnit.next = Phase.Fetch;
+         ControlUnit.opcode = Operation.Unknown;
+      }
       
    }
    
+   /****
+    * Sets the Memory Address Register (MAR) to the specified value and updates the Memory Data Register (MDR) with the memory content at that address.
+    *
+    * @param v the value to set in the MAR, representing a memory address
+    */
    public static void setMarR(Value v) {
       Registers.setMAR(v);
       Registers.setMDR(Registers.getMC(v));
    }
-
+   
+   /**
+    * Initiates a single execution step asynchronously on a new thread.
+    *
+    * @param ignored unused action event parameter
+    */
    public static void step(ActionEvent ignored) {
       Utils.runOnNewThread(Execution::step);
    }
