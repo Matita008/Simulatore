@@ -10,12 +10,18 @@ public final class Registers {
    private static final ArrayList<Value> MC = new ArrayList<>(Constants.MC_Size);
    private static final DoubleValue pc = new DoubleValue(0);
    public static int modFlag = 0;
-   private static Value ir = Value.getNew();
-   private static Value pointer = Value.getNew();
-   private static Value mar = Value.getNew();
-   private static Value mdr = Value.getNew();
+   
+   private static Value ir = Value.getNewAddress();
+   private static Value pointer = Value.getNewAddress();
+   private static Value mar = Value.getNewAddress();
+   private static Value mdr = Value.getNewAddress();
+   
    private static Value Acc = Value.getNew();
    private static Value regB = Value.getNew();
+   private static Value bufIn = Value.getNew();
+   private static Value bufOut = Value.getNew();
+   
+   private static Flag zero = new Flag();
    
    static {
       for (int i = 0; i < Constants.MC_Size; i++) {
@@ -110,5 +116,29 @@ public final class Registers {
    public static void setPointer(Value pointer) {
       modFlag = 2 | modFlag;
       Registers.pointer = pointer;
+   }
+   
+   public static Value getBufIn() {
+      return bufIn;
+   }
+   
+   public static void setBufIn(Value bufIn) {
+      Registers.bufIn = bufIn;
+   }
+   
+   public static Value getBufOut() {
+      return bufOut;
+   }
+   
+   public static void setBufOut(Value bufOut) {
+      Registers.bufOut = bufOut;
+   }
+   
+   public static Flag getZero() {
+      return zero;
+   }
+   
+   public static void setZero(Flag zero) {
+      Registers.zero = zero;
    }
 }

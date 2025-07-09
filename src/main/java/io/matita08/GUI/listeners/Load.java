@@ -2,6 +2,7 @@ package io.matita08.GUI.listeners;
 
 import io.matita08.GUI.Display;
 import io.matita08.GUI.Registers;
+import io.matita08.Utils;
 import io.matita08.value.Value;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.util.Scanner;
 public class Load implements ActionListener {
    JFileChooser fc;
    JFrame f;
-
+   
    public Load() {
       fc = new JFileChooser();
       fc.setFileFilter(new FileFilter() {//TODO Low priority: can be more clean?
@@ -21,7 +22,7 @@ public class Load implements ActionListener {
          public boolean accept(File f) {
             return f.isDirectory() || f.getName().endsWith(".txt") || f.getName().endsWith(".bat") || f.getName().endsWith(".sim");
          }
-
+         
          @Override
          public String getDescription() {
             return "Text file (.txt, .sim)";
@@ -45,8 +46,9 @@ public class Load implements ActionListener {
       f.pack();
       f.setVisible(true);
       Display.instance.enableInputMethods(false);
+      fc.setMultiSelectionEnabled(false);
    }
-
+   
    public void load(ActionEvent e) {
       if(f == null) return;
       Display.instance.enableInputMethods(true);
@@ -56,27 +58,7 @@ public class Load implements ActionListener {
       f = null;
       if (e.getActionCommand().equals("CancelSelection")) return;
       if (!e.getActionCommand().equals("ApproveSelection")) return;
-      try {
-         System.out.println("Opened file: " + fc.getSelectedFile().toString());
-         File fi = fc.getSelectedFile();
-         Scanner s = new Scanner(fi);
-         int pos = 0;
-         while(s.hasNext()) {
-            String st = s.nextLine();
-            if(st.startsWith("?") || st.isEmpty()){
-               Registers.setMC(pos, Value.nullValue);
-            } else {
-                try {
-                    int n = Integer.parseInt(st);
-                    Registers.setMC(pos, Value.create(n));
-                } catch (NumberFormatException ex) {
-                    Registers.setMC(pos, Value.nullValue);
-                }
-            }
-            pos++;
-         }
-      } catch (FileNotFoundException _) {
-         System.out.println("The selected file (" + fc.getSelectedFile().getName() + ") doesn't exist or i was unable to open it");
-      }//*/
+      System.out.println("Opened file: " + fc.getSelectedFile().toString());
+      Utils.loadMC(fc.getSelectedFile());
    }
 }
