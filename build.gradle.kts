@@ -52,10 +52,6 @@ tasks.javadoc {
             addStringOption("Xmaxwarns", "1")
             encoding = "UTF-8"
             charSet = "UTF-8"
-            author = true
-            version = true
-            use = true
-            splitIndex = true
         }
     }
     include("**/io/matita08/**")
@@ -134,4 +130,5 @@ tasks.register("checkDocCoverage") {
         }
     }
 }
+
 
