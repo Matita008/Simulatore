@@ -2,9 +2,9 @@ name: Generate and Deploy Documentation
 
 on:
   push:
-    branches: [ testing_coderabbit ]
+    branches: [ main ]
   pull_request:
-    branches: [ testing_coderabbit ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
