@@ -3,7 +3,28 @@ package io.matita08.data;
 import io.matita08.*;
 
 /**
- * Class to manage various flags
+ * CPU Flags Management System.
+ * <p>
+ * This class manages CPU flags that indicate the results of arithmetic and
+ * logic operations. Flags are used by conditional instructions and provide
+ * status information about the current CPU state.
+ * </p>
+ *
+ * <p>
+ * <strong>Supported Flags:</strong>
+ * <ul>
+ * <li><strong>Zero Flag:</strong> Set when an operation result equals zero</li>
+ * <li><strong>Overflow Flag:</strong> Set when an operation exceeds maximum value</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Flags are stored as a bitmask int and accessed using {@link FlagsConstants} as indexes.
+ * </p>
+ *
+ * @author Matita008
+ * @version 1.5
+ * @since 1.0
  */
 public class Flags {
    /**

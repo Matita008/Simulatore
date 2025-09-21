@@ -12,6 +12,7 @@ public enum FlagsConstants {
    
    /**
     * Constant equivalent to {@code 2^values().length-1}
+    * It's the sum of all the {@code FlagsConstants.get()}
     */
    public static final int all;
    
