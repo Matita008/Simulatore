@@ -43,8 +43,28 @@ public class UndefinedValue extends Value implements Cloneable{
       return this;
    }
    
+   /**
+    * Returns the undefined value resulting from multiplication.
+    *
+    * For UndefinedValue, multiplication by any other Value produces the same undefined instance;
+    * the operand is ignored and no new object is created.
+    *
+    * @param v2 the multiplier (ignored)
+    * @return this undefined Value
+    */
    @Override
    public Value mul(Value v2) {
       return this;
+   }
+   
+   /**
+    * Indicates that this undefined value is never equal to any integer.
+    *
+    * @param n the integer to compare against (ignored)
+    * @return false always
+    */
+   @Override
+   public boolean equals(int n) {
+      return false;
    }
 }
