@@ -10,12 +10,18 @@ public final class Registers {
    private static final ArrayList<Value> MC = new ArrayList<>(Constants.MC_Size);
    private static final DoubleValue pc = new DoubleValue(0);
    public static int modFlag = 0;
-   private static Value ir = Value.getNew();
-   private static Value pointer = Value.getNew();
-   private static Value mar = Value.getNew();
-   private static Value mdr = Value.getNew();
+   
+   private static Value ir = Value.getNewAddress();
+   private static Value pointer = Value.getNewAddress();
+   private static Value mar = Value.getNewAddress();
+   private static Value mdr = Value.getNewAddress();
+   
    private static Value Acc = Value.getNew();
    private static Value regB = Value.getNew();
+   private static Value bufIn = Value.getNew();
+   private static Value bufOut = Value.getNew();
+   
+   private static Flag zero = new Flag();
    
    static {
       for (int i = 0; i < Constants.MC_Size; i++) {
@@ -107,8 +113,74 @@ public final class Registers {
       return pointer;
    }
    
+   /**
+    * Update the pointer register with a new value and mark the pointer/MA register as modified.
+    *
+    * @param pointer the new pointer value (typically an address) to store in the pointer register
+    */
    public static void setPointer(Value pointer) {
       modFlag = 2 | modFlag;
       Registers.pointer = pointer;
+   }
+   
+   /**
+    * Returns the current input buffer register.
+    *
+    * The input buffer (bufIn) holds the latest Value received from an external input
+    * source and is used by the CPU simulation as the pending input operand.
+    *
+    * @return the Value stored in the bufIn register
+    */
+   public static Value getBufIn() {
+      return bufIn;
+   }
+   
+   /**
+    * Sets the input buffer register (bufIn) to the provided Value.
+    *
+    * @param bufIn the Value to store in the input buffer register
+    */
+   public static void setBufIn(Value bufIn) {
+      Registers.bufIn = bufIn;
+   }
+   
+   /**
+    * Returns the current output buffer register.
+    *
+    * @return the Value stored in the output buffer (bufOut)
+    */
+   public static Value getBufOut() {
+      return bufOut;
+   }
+   
+   /**
+    * Sets the output buffer register.
+    *
+    * @param bufOut the Value to store in the static output buffer register
+    */
+   public static void setBufOut(Value bufOut) {
+      Registers.bufOut = bufOut;
+   }
+   
+   /**
+    * Returns the CPU zero/status flag.
+    *
+    * The flag indicates whether the result of the last operation was zero.
+    *
+    * @return the current zero Flag instance
+    */
+   public static Flag getZero() {
+      return zero;
+   }
+   
+   /**
+    * Set the CPU zero/status flag stored in Registers.
+    *
+    * Replaces the current zero flag with the provided Flag instance (may be null to clear).
+    *
+    * @param zero the new zero flag to store
+    */
+   public static void setZero(Flag zero) {
+      Registers.zero = zero;
    }
 }
