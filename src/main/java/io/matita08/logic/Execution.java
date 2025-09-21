@@ -1,15 +1,13 @@
 package io.matita08.logic;
 
+import io.matita08.*;
 import io.matita08.GUI.*;
-import io.matita08.Utils;
+import io.matita08.data.*;
 import io.matita08.value.Value;
 
-import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 public class Execution {
-   private static final int MAX_CYCLES = 3;
-   
    public static boolean stepped = false;
    
    public static void step(int countMax) {
@@ -24,39 +22,58 @@ public class Execution {
    public static boolean step() {
       if(ControlUnit.current == Phase.Execute && ControlUnit.opcode == Operation.Halt) return false;
       ControlUnit.current = ControlUnit.next;
-      ControlUnit.currentCycles = ControlUnit.nextCycles;
       ControlUnit.next.run();
+      ControlUnit.currentCycle--;
       stepped = true;
-      SwingUtilities.invokeLater(Display::update);
+      Utils.runOnNewThread(Display::update);
       return true;
    }
    
    public static void fetch() {
-      setMarR(Registers.pc().getAndInc());
+      ControlUnit.ALUOpcode = "";
+      setMarR(next());
       Registers.setIr(Registers.getMDR());
       ControlUnit.next = Phase.Decode;
-      ControlUnit.nextCycles = 1;
-      ControlUnit.currentCycles = -1;
+      ControlUnit.currentCycle = 0;
+      ControlUnit.totalCycles = -1;
+      ControlUnit.opcode = Operation.Unknown;
    }
    
    public static void decode() {
       ControlUnit.next = Phase.Execute;
       ControlUnit.opcode = Operation.get(Registers.getIr().get());
-      ControlUnit.nextCycles = ControlUnit.opcode.cycles;
+      ControlUnit.totalCycles = ControlUnit.currentCycle = ControlUnit.opcode.cycles;
+      ControlUnit.currentCycle++;
    }
    
    public static void execute() {
-      ControlUnit.opcode.action.accept(ControlUnit.currentCycles);
-      if((ControlUnit.nextCycles = ControlUnit.currentCycles - 1) == 0) ControlUnit.next = Phase.Fetch;
+      ControlUnit.opcode.action.accept(ControlUnit.currentCycle);
+      if(ControlUnit.currentCycle == 1) {
+         ControlUnit.next = Phase.Fetch;
+      }
       
+   }
+   
+   public static void step(ActionEvent ignored) {
+      Utils.runOnNewThread(Execution::step);
+   }
+   
+   public static Value next(){
+      return Registers.pc().getAndInc();
    }
    
    public static void setMarR(Value v) {
       Registers.setMAR(v);
       Registers.setMDR(Registers.getMC(v));
    }
-
-   public static void step(ActionEvent ignored) {
-      Utils.runOnNewThread(Execution::step);
+   
+   public static void readPointer(int cycle){
+      if(cycle < 0 || cycle > Constants.getAddressSize()) throw new AssertionError("An error occurred\nDetails: treadPointer cycle is OOB, value: " + cycle);
+      setMarR(next());
+      if(Constants.getAddressSize() == 1) {
+         Registers.setPointer(Registers.getMDR());
+      } else {
+         Registers.getPointer().set(Registers.getMDR());
+      }
    }
 }

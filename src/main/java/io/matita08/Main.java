@@ -1,33 +1,22 @@
 package io.matita08;
 
-import io.matita08.GUI.*;
-import io.matita08.logic.Execution;
-import io.matita08.value.SingleValue;
+import io.matita08.GUI.Display;
 
 import javax.swing.SwingUtilities;
-import java.lang.reflect.InvocationTargetException;
 
 public class Main {
    public static void main(String[] args) {
-      //System.out.println("Hello world!");
-      //Value v= new DoubleValue(1);
-      //System.out.println(Registers.getMC(v).getSigned());
+      System.out.println("[DEBUG] Stdout stream: " + System.out);
+      System.out.println("[DEBUG] Error stream: " + System.err);
+      System.out.println("[DEBUG] File stream: " + ExceptionHandler.logStream);
+      System.err.println("[DEBUG] Stdout stream: " + System.out);
+      System.err.println("[DEBUG] Error stream: " + System.err);
+      System.err.println("[DEBUG] File stream: " + ExceptionHandler.logStream);
+      ExceptionHandler.logStream.println("[DEBUG] Stdout stream: " + System.out);
+      ExceptionHandler.logStream.println("[DEBUG] Error stream: " + System.err);
+      ExceptionHandler.logStream.println("[DEBUG] File stream: " + ExceptionHandler.logStream);
+      if(Constants.init(args)) return;
       SwingUtilities.invokeLater(Display::init);
-      Registers.setMC(0, new SingleValue(2));
-      Registers.setMC(1, new SingleValue(7));
-      Registers.setMC(2, new SingleValue(5));
-      Registers.setMC(3, new SingleValue(15));
-      Registers.setMC(4, new SingleValue(2));
-      Registers.setMC(5, new SingleValue(15));
-      Display.update();
-      Registers.setAcc(new SingleValue(5));
-      Execution.step(10 * 3);
-      Display.update();
-      System.out.println(Registers.getRegB());
-      System.out.println(Registers.pc());
+      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(false));
    }
 }
-//TODO Display.java
-//TODO /\ and others (ex Enums) move to a single different package
-//TODO
-//TODO
