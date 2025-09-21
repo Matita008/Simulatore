@@ -1,0 +1,63 @@
+name: Documentation Quality Check
+
+on:
+  push:
+    branches: [ testing_coderabbit ]
+  pull_request:
+    branches: [ testing_coderabbit ]
+
+jobs:
+  doc-quality-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v3
+      
+    - name: Check Javadoc generation
+      run: ./gradlew javadoc
+      
+    - name: Verify documentation coverage
+      run: |
+        echo "=== Documentation Coverage Report ==="
+        TOTAL_FILES=$(find src/main/java -name "*.java" | wc -l)
+        echo "Total Java files: $TOTAL_FILES"
+        
+        DOCUMENTED_FILES=$(find src/main/java -name "*.java" -exec grep -l "/\*\*" {} \; | wc -l)
+        echo "Documented files: $DOCUMENTED_FILES"
+        
+        if [ $TOTAL_FILES -gt 0 ]; then
+          COVERAGE=$(awk "BEGIN {printf \"%.2f\", ($DOCUMENTED_FILES * 100) / $TOTAL_FILES}")
+          echo "Documentation coverage: $COVERAGE%"
+          
+          if (( $(awk "BEGIN {print ($COVERAGE >= 80)}") )); then
+            echo "✅ Documentation coverage meets minimum threshold (80%)"
+          else
+            echo "⚠️  Documentation coverage below recommended threshold (80%)"
+            echo "Consider adding more comprehensive Javadoc comments"
+          fi
+        else
+          echo "No Java files found"
+        fi
+        
+    - name: Check for package-info.java files
+      run: |
+        echo "=== Package Documentation Check ==="
+        PACKAGE_DOCS=$(find src/main/java -name "package-info.java" | wc -l)
+        echo "Package documentation files: $PACKAGE_DOCS"
+        
+        if [ $PACKAGE_DOCS -gt 0 ]; then
+          echo "✅ Package documentation found"
+          find src/main/java -name "package-info.java"
+        else
+          echo "💡 Consider adding package-info.java files for better documentation"
+        fi
